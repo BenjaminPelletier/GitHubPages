@@ -45,3 +45,39 @@ jobs:
         with:
           name: tests-b
           path: ./output
+
+  deploy:
+    needs: [fake-tests-a, fake-tests-b]
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: Get tests-a
+        uses: actions/download-artifact@v3
+        with:
+          name: tests-a
+          path: ./tests-a/output
+      - name: Get tests-b
+        uses: actions/download-artifact@v3
+        with:
+          name: tests-b
+          path: ./tests-b/output
+      - name: Make site
+        run: |
+          mkdir ./public
+          cp -r ./tests-a/output/*.html ./public
+          cp -r ./tests-b/output/*.html ./public
+          echo '<a href="page1.html">page1</a><br><a href="page2.html">page2</a><br><a href="page3.html">page3</a><br>' > ./public/index.html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: ${{ github.event.head_commit.message }}
