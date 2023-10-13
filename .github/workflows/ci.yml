@@ -72,7 +72,8 @@ jobs:
           cp -r ./tests-a/output/*.html ./public
           cp -r ./tests-b/output/*.html ./public
           echo '<a href="page1.html">page1</a><br><a href="page2.html">page2</a><br><a href="page3.html">page3</a><br>' > ./public/index.html
-          echo "# Page 0\nHello world" > ./public/page0.md
+          printf "# Page 0\nHello world\n\m[Link to page 0b md](./page0b.md)\n\n[Link to page 0b html](./page0b.html)" > ./public/page0.md
+          printf "# Page 0b" > ./public/page0b.md
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
