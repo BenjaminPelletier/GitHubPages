@@ -1,0 +1,47 @@
+name: Continuous integration
+
+on:
+  pull_request: # All
+  push:
+    branches:
+      - main
+
+jobs:
+  fake-tests-a:
+    name: Fake CI tests group A
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Pretend test 1
+        run: |
+          mkdir ./output
+          echo "Some stuff 1" > ./output/page1.html
+      - name: Pretend test 2
+        run: |
+          echo "Some stuff 2" > ./output/page2.html
+      - name: Save artifacts for publishing
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-a
+          path: ./output
+
+  fake-tests-b:
+    name: Fake CI tests group B
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodule: true
+      - name: Pretend test 3
+        run: |
+          mkdir ./output
+          echo "Some stuff 3" > ./output/page3.html
+      - name: Save artifacts for publishing
+        uses: actions/upload-artifact@v3
+        with:
+          name: tests-b
+          path: ./output
